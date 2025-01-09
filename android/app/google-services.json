@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "469573359751",
+    "project_id": "notesapp-d4732",
+    "storage_bucket": "notesapp-d4732.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469573359751:android:4ef77c4f17b0031b3e4022",
+        "android_client_info": {
+          "package_name": "com.example.latihanfirebasereal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469573359751-5cv8rp331ipnf791mhasqjlkrebkkik3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkOvJTuULUUjbOn4jnDE9gTTfXg6_pgYY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469573359751-5cv8rp331ipnf791mhasqjlkrebkkik3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469573359751:android:e2ae61f9f164c7923e4022",
+        "android_client_info": {
+          "package_name": "com.example.mynoteapps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469573359751-5cv8rp331ipnf791mhasqjlkrebkkik3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkOvJTuULUUjbOn4jnDE9gTTfXg6_pgYY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469573359751-5cv8rp331ipnf791mhasqjlkrebkkik3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
