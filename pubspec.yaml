@@ -37,12 +37,11 @@ dependencies:
   cupertino_icons: ^1.0.6
   firebase_core: ^3.10.0
   firebase_messaging: ^15.2.0
-  firebase_auth: ^4.19.0
-  cloud_firestore: ^4.17.0
   font_awesome_flutter:
   google_sign_in:
   firebase_database:
   get:
+  firebase_auth: 5.4.0
 
 dev_dependencies:
   flutter_test:
