@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.mynoteapps"
-        minSdk = 21 // Minimum SDK
+        minSdk = 23 // Minimum SDK
         targetSdk = 34 // Target SDK
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
