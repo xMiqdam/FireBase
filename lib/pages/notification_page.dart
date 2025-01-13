@@ -8,7 +8,7 @@ class NotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final message = ModalRoute.of(context)?.settings.arguments as RemoteMessage?;
 
-    // Validasi jika message null
+   
     if (message == null) {
       return Scaffold(
         appBar: AppBar(
