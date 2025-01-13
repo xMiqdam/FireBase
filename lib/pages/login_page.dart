@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'home_page.dart'; // Pastikan Anda telah mengimpor halaman HomePage
 
 class SignInScreen extends StatelessWidget {
-  Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
@@ -20,6 +21,12 @@ class SignInScreen extends StatelessWidget {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
+      // Navigate to HomePage after successful login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+
       return userCredential.user;
     } catch (e) {
       print('Error during Google Sign-In: $e');
@@ -34,7 +41,7 @@ class SignInScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            User? user = await signInWithGoogle();
+            User? user = await signInWithGoogle(context);
             if (user != null) {
               print('User signed in: ${user.displayName}');
             }
