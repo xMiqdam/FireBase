@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(title: Text('Home Page')),
       body: Center(
         child: Text(
-          'Welcome to the Home Page!',
+          'Welcome to the Home Pagee!',
           style: TextStyle(fontSize: 24),
         ),
       ),
