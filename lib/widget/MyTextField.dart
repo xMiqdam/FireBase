@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 class MyTextField extends StatefulWidget {
   final String hintText;
   final bool isPassword;
-  final TextEditingController? controller;
-  final IconData? icon;
+  final TextEditingController controller;
+  final IconData icon;
+  final Color textFieldColor;
+  final Color textColor;
 
   const MyTextField({
     Key? key,
     required this.hintText,
-    this.isPassword = false,
-    this.controller,
-    this.icon,
+    required this.isPassword,
+    required this.controller,
+    required this.icon,
+    required this.textFieldColor,
+    required this.textColor,
   }) : super(key: key);
 
   @override
@@ -28,29 +32,29 @@ class _MyTextFieldState extends State<MyTextField> {
       child: TextField(
         controller: widget.controller,
         obscureText: widget.isPassword && !_isPasswordVisible,
+        style: TextStyle(color: widget.textColor),
         decoration: InputDecoration(
           hintText: widget.hintText,
-          prefixIcon: widget.icon != null
-              ? Icon(
+          hintStyle: TextStyle(color: widget.textColor.withOpacity(0.6)),
+          prefixIcon: Icon(
             widget.icon,
-            color: Colors.grey,
-          )
-              : null,
+            color: widget.textColor,
+          ),
           suffixIcon: widget.isPassword
               ? IconButton(
-            icon: Icon(
-              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            },
-          )
+                  icon: Icon(
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: widget.textColor,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                )
               : null,
           filled: true,
-          fillColor: Colors.grey[200],
+          fillColor: widget.textFieldColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
