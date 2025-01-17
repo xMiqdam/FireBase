@@ -37,7 +37,6 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController usernameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
 
@@ -80,14 +79,6 @@ class SignInScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 20),
-                        MyTextField(
-                          hintText: 'Username',
-                          isPassword: false,
-                          controller: usernameController,
-                          icon: Icons.person,
-                          textFieldColor: lightBeige,
-                          textColor: blackz,
-                        ),
                         MyTextField(
                           hintText: 'Email',
                           isPassword: false,
