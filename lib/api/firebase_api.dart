@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:mynoteapps/main.dart';
 
@@ -23,4 +24,18 @@ class FirebaseApi {
     FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage);
   }
+  final CollectionReference notes = FirebaseFirestore.instance.collection('notes');
+
+  Future <void> addNote(String note){
+    return notes.add({ 
+      'note': note,
+      'timestamp' : Timestamp.now(),
+    });
+  }
+  Stream<QuerySnapshot>getNotesStream(){
+   final notesStream = notes.orderBy('timestamp',descending: true).snapshots();
+
+   return notesStream;
+  }
+
 }
