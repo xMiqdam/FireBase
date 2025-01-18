@@ -8,17 +8,13 @@ class HomePage extends StatelessWidget {
     try {
     
       await FirebaseAuth.instance.signOut();
-      
-    
       await GoogleSignIn().signOut();
-      
-    
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => SignInScreen()),
       );
     } catch (e) {
-      print('Error during sign-out: $e');
+      print('Error during sign-out :): $e');
     }
   }
 
@@ -38,7 +34,7 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          'Welcome to the Home Page!',
+          'slamat datang gesss',
           style: TextStyle(fontSize: 24),
         ),
       ),

@@ -7,13 +7,36 @@ import 'package:mynoteapps/widget/MyTextField.dart';
 import 'home_page.dart';
 
 class SignInScreen extends StatelessWidget {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<User?> signInWithEmailAndPassword(
+      BuildContext context, String email, String password) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+
+      return userCredential.user;
+    } catch (e) {
+      print('Error during Email/Password Login: $e');
+      return null;
+    }
+  }
+
   Future<User?> signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) {
         return null;
       }
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -97,7 +120,31 @@ class SignInScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            String email = emailController.text.trim();
+                            String password = passwordController.text.trim();
+
+                            if (email.isNotEmpty && password.isNotEmpty) {
+                              User? user = await signInWithEmailAndPassword(
+                                  context, email, password);
+                              if (user == null) {
+                                // Handle login failure
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Login failed. Please try again.'),
+                                  ),
+                                );
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Email and password cannot be empty.'),
+                                ),
+                              );
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: tealGreen,
                             minimumSize: Size(double.infinity, 50),
