@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/get_navigation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mynoteapps/api/firebase_api.dart';
-import 'login_page.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mynoteapps/widget/MyColors.dart';
+import 'package:mynoteapps/widget/MyText.dart';
+import 'package:mynoteapps/widget/MyTextField.dart';
+import 'package:mynoteapps/widget/MyButton.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,35 +15,36 @@ class _HomePageState extends State<HomePage> {
   final FirebaseApi firebaseapi = FirebaseApi();
   final TextEditingController textController = TextEditingController();
 
-  Future<void> signOut(BuildContext context) async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      await GoogleSignIn().signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SignInScreen()),
-      );
-    } catch (e) {
-      print('Error during sign-out: $e');
-    }
-  }
-
   void openNoteBox() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        content: TextField(
+        backgroundColor: lightBeige,
+        content: MyTextField(
           controller: textController,
-          decoration: InputDecoration(hintText: "Enter your note here"),
+          hintText: "Enter your note here",
+          isPassword: false,
+          icon: Icons.note,
+          textFieldColor: Colors.white,
+          textColor: blackz,
         ),
         actions: [
-          ElevatedButton(
+          MyButton(
+            textButton: "Add",
+            backgroundColor: tealGreen,
+            textColor: Colors.white,
             onPressed: () {
-              firebaseapi.addNote(textController.text);
-              textController.clear();
-              Navigator.pop(context);
+              if (textController.text.isNotEmpty) {
+                firebaseapi.addNote(textController.text);
+                textController.clear();
+                Navigator.pop(context);
+              }
             },
-            child: Text("Add"),
+            borderRadius: BorderRadius.circular(10),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            margin: EdgeInsets.zero,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
           ),
         ],
       ),
@@ -53,56 +54,118 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: lightBeige,
       appBar: AppBar(
-        title: Text('Home Page'),
+        backgroundColor: lightBeige,
+        elevation: 0,
+        title: MyText(
+          text: 'Notemad',
+          style: TextStyle(
+            fontFamily: 'Cursive',
+            fontSize: 28,
+            color: blackz,
+          ),
+          textAlign: TextAlign.left,
+        ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              signOut(context);
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Center(
+              child: MyText(
+                text: 'Hi User',
+                style: TextStyle(
+                  fontFamily: 'Cursive',
+                  fontSize: 20,
+                  color: blackz,
+                ),
+                textAlign: TextAlign.right,
+              ),
+            ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: openNoteBox,
-        child: const Icon(Icons.add),
+        backgroundColor: tealGreen,
+        child: Icon(Icons.add, color: Colors.white),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Selamat datang gesss',
-              style: TextStyle(fontSize: 24),
-            ),
-          ),
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: firebaseapi.getNotesStream(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<QueryDocumentSnapshot> notesList = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: notesList.length,
-                    itemBuilder: (context, index) {
-                      DocumentSnapshot document = notesList[index];
-                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                      String noteText = data['note'];
-                      return ListTile(
-                        title: Text(noteText),
-                      );
-                    },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: firebaseapi.getNotesStream(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<QueryDocumentSnapshot> notesList = snapshot.data!.docs;
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                ),
+                itemCount: notesList.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot document = notesList[index];
+                  Map<String, dynamic> data =
+                      document.data() as Map<String, dynamic>;
+                  String noteText = data['note'];
+                  return Card(
+                    elevation: 4,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          MyText(
+                            text: noteText,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: blackz,
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                          Spacer(),
+                          Divider(color: Colors.grey),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                color: tealGreen,
+                                size: 18,
+                              ),
+                              SizedBox(width: 10),
+                              Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   );
-                } else {
-                  return const Center(
-                    child: Text("No notes available"),
-                  );
-                }
-              },
-            ),
-          ),
-        ],
+                },
+              );
+            } else {
+              return Center(
+                child: MyText(
+                  text: "No notes available.",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: blackz,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }
