@@ -12,20 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final FirebaseApi firebaseapi = FirebaseApi();
-
   final TextEditingController textController = TextEditingController();
 
   Future<void> signOut(BuildContext context) async {
     try {
-    
       await FirebaseAuth.instance.signOut();
-      
-    
       await GoogleSignIn().signOut();
-      
-    
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => SignInScreen()),
@@ -35,21 +28,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void openNoteBox(){
-    showDialog(context: context, builder: (context) => AlertDialog(
-      content: TextField(
-        controller: textController,
+  void openNoteBox() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: TextField(
+          controller: textController,
+          decoration: InputDecoration(hintText: "Enter your note here"),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              firebaseapi.addNote(textController.text);
+              textController.clear();
+              Navigator.pop(context);
+            },
+            child: Text("Add"),
+          ),
+        ],
       ),
-      actions: [
-        ElevatedButton(onPressed: () {
-          firebaseapi.addNote(textController.text);
-
-          textController.clear();
-
-          Navigator.pop(context);
-        }, child: Text("Add"))
-      ],
-    ));
+    );
   }
 
   @override
@@ -61,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
-              signOut(context);  
+              signOut(context);
             },
           ),
         ],
@@ -69,28 +67,43 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: openNoteBox,
         child: const Icon(Icons.add),
-        ),
-        body: StreamBuilder<QuerySnapshot>(
-          stream: firebaseapi.getNotesStream(),
-          builder: (context, snapshot) {
-            if(snapshot.hasData){
-              List notesList = snapshot.data!.docs;
-              return ListView.builder(
-                itemCount: notesList.length,
-                itemBuilder: (context, index) {
-                DocumentSnapshot document = notesList[index];
-                String docID = document.id;
-                Map<String, dynamic> data = document.data() as Map<String,dynamic>;
-                String noteText = data['note'];
-                return ListTile(
-                  title: Text(noteText),
-                );
-              },);
-            }else{
-              return const Text( "no notes");
-            }
-          },
-        ),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Selamat datang gesss',
+              style: TextStyle(fontSize: 24),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: firebaseapi.getNotesStream(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<QueryDocumentSnapshot> notesList = snapshot.data!.docs;
+                  return ListView.builder(
+                    itemCount: notesList.length,
+                    itemBuilder: (context, index) {
+                      DocumentSnapshot document = notesList[index];
+                      Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                      String noteText = data['note'];
+                      return ListTile(
+                        title: Text(noteText),
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: Text("No notes available"),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
