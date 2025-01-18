@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
   final FirebaseApi firebaseapi = FirebaseApi();
   final TextEditingController textController = TextEditingController();
 
-  void openNoteBox() {
+  void openNoteBox({String? docID}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -34,11 +34,13 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: tealGreen,
             textColor: Colors.white,
             onPressed: () {
-              if (textController.text.isNotEmpty) {
+              if (docID == null) {
                 firebaseapi.addNote(textController.text);
-                textController.clear();
-                Navigator.pop(context);
+              } else {
+                firebaseapi.updateNote(docID, textController.text);
               }
+              textController.clear();
+              Navigator.pop(context);
             },
             borderRadius: BorderRadius.circular(10),
             fontSize: 16,
@@ -105,6 +107,7 @@ class _HomePageState extends State<HomePage> {
                 itemCount: notesList.length,
                 itemBuilder: (context, index) {
                   DocumentSnapshot document = notesList[index];
+                  String docID = document.id;
                   Map<String, dynamic> data =
                       document.data() as Map<String, dynamic>;
                   String noteText = data['note'];
@@ -133,17 +136,13 @@ class _HomePageState extends State<HomePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Icon(
-                                Icons.edit,
-                                color: tealGreen,
-                                size: 18,
+                              IconButton(
+                                onPressed: () => firebaseapi.deleteNote(docID),
+                                icon: Icon(Icons.delete),
                               ),
-                              SizedBox(width: 10),
-                              Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                                size: 18,
-                              ),
+                              IconButton(
+                                  onPressed: () => openNoteBox(docID: docID),
+                                  icon: Icon(Icons.edit)),
                             ],
                           ),
                         ],
