@@ -145,7 +145,7 @@ class SignInScreen extends StatelessWidget {
                           onPressed: () async {
                             User? user = await signInWithGoogle(context);
                             if (user != null) {
-                              print('User signed in: ${user.displayName}');
+                              print('User in: ${user.displayName}');
                             }
                           },
                           icon: Icon(Icons.g_mobiledata, color: Colors.white),
