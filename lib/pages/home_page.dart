@@ -9,19 +9,12 @@ import 'package:mynoteapps/widget/MyText.dart';
 import 'package:mynoteapps/widget/MyTextField.dart';
 import 'package:mynoteapps/widget/MyButton.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   final FirebaseApi firebaseapi = FirebaseApi();
   final TextEditingController textController = TextEditingController();
 
-
-   Future<void> signOut(BuildContext context) async {
+  Future<void> signOut(BuildContext context) async {
     try {
-    
       await FirebaseAuth.instance.signOut();
       await GoogleSignIn().signOut();
       Navigator.pushReplacement(
@@ -29,29 +22,141 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
-      print('ERROR SIGN-OUT :): $e');
+      print('Error during sign-out :): $e');
     }
   }
 
+  void openNotePreview({required BuildContext context, required String docID, required String currentNote}) {
+  textController.text = currentNote; // Set teks catatan ke controller
 
-  void openNoteBox({String? docID}) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: lightBeige,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      contentPadding: EdgeInsets.all(16),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MyText(
+            text: "Preview Note",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: blackz,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          SizedBox(height: 12),
+          TextField(
+            controller: textController,
+            maxLines: 6,
+            readOnly: true, // Membuat field hanya untuk membaca
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              hintText: "No content available",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            firebaseapi.deleteNote(docID);
+            textController.clear();
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.delete, color: Colors.red),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            openNoteEditor(context: context, docID: docID, currentNote: currentNote);
+          },
+          style: TextButton.styleFrom(
+            backgroundColor: tealGreen,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: MyText(
+            text: "Edit",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
+  void openNoteEditor({required BuildContext context, String? docID, String? currentNote}) {
+    textController.text = currentNote ?? '';
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: lightBeige,
-        content: MyTextField(
-          controller: textController,
-          hintText: " Please Enter your note here",
-          isPassword: false,
-          icon: Icons.note,
-          textFieldColor: Colors.white,
-          textColor: blackz,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        contentPadding: EdgeInsets.all(16),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MyText(
+              text: docID == null ? "Add Note" : "Edit Note",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: blackz,
+              ),
+              textAlign: TextAlign.left,
+            ),
+            SizedBox(height: 12),
+            TextField(
+              controller: textController,
+              maxLines: 6,
+              keyboardType: TextInputType.multiline,
+              decoration: InputDecoration(
+                hintText: "Enter your note here",
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ],
         ),
         actions: [
-          MyButton(
-            textButton: "Add",
-            backgroundColor: tealGreen,
-            textColor: Colors.white,
+          TextButton(
+            onPressed: () {
+              textController.clear();
+              Navigator.pop(context);
+            },
+            child: MyText(
+              text: "Close",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.red,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          TextButton(
             onPressed: () {
               if (docID == null) {
                 firebaseapi.addNote(textController.text);
@@ -61,11 +166,21 @@ class _HomePageState extends State<HomePage> {
               textController.clear();
               Navigator.pop(context);
             },
-            borderRadius: BorderRadius.circular(10),
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            margin: EdgeInsets.zero,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            style: TextButton.styleFrom(
+              backgroundColor: tealGreen,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: MyText(
+              text: "Edit",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
@@ -89,18 +204,16 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.left,
         ),
         actions: [
-          
           IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
-              signOut(context);  
+              signOut(context);
             },
           ),
         ],
       ),
-      
       floatingActionButton: FloatingActionButton(
-        onPressed: openNoteBox,
+        onPressed: () => openNoteEditor(context: context),
         backgroundColor: tealGreen,
         child: Icon(Icons.add, color: Colors.white),
       ),
@@ -121,44 +234,33 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   DocumentSnapshot document = notesList[index];
                   String docID = document.id;
-                  Map<String, dynamic> data =
-                      document.data() as Map<String, dynamic>;
+                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
                   String noteText = data['note'];
-                  return Card(
-                    elevation: 4,
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MyText(
-                            text: noteText,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: blackz,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Spacer(),
-                          Divider(color: Colors.grey),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                onPressed: () => firebaseapi.deleteNote(docID),
-                                icon: Icon(Icons.delete),
+
+                  return GestureDetector(
+                    onTap: () => openNotePreview(context: context, docID: docID, currentNote: noteText),
+                    child: Card(
+                      elevation: 4,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            MyText(
+                              text: noteText,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: blackz,
                               ),
-                              IconButton(
-                                  onPressed: () => openNoteBox(docID: docID),
-                                  icon: Icon(Icons.edit)),
-                            ],
-                          ),
-                        ],
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
@@ -169,7 +271,7 @@ class _HomePageState extends State<HomePage> {
                 child: MyText(
                   text: "No notes available.",
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 16,
                     color: blackz,
                   ),
                   textAlign: TextAlign.center,
