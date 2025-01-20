@@ -103,89 +103,92 @@ class HomePage extends StatelessWidget {
 
 
   void openNoteEditor({required BuildContext context, String? docID, String? currentNote}) {
-    textController.text = currentNote ?? '';
+  textController.text = currentNote ?? '';  // If there is an existing note, set it. Otherwise, leave it empty.
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: lightBeige,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        contentPadding: EdgeInsets.all(16),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MyText(
-              text: docID == null ? "Add Note" : "Edit Note",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: blackz,
-              ),
-              textAlign: TextAlign.left,
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: lightBeige,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      contentPadding: EdgeInsets.all(16),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MyText(
+            text: docID == null ? "Add Note" : "Edit Note",  // Show 'Add Note' for creating a new note
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: blackz,
             ),
-            SizedBox(height: 12),
-            TextField(
-              controller: textController,
-              maxLines: 6,
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                hintText: "Enter your note here",
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              textController.clear();
-              Navigator.pop(context);
-            },
-            child: MyText(
-              text: "Close",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.red,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            textAlign: TextAlign.left,
           ),
-          TextButton(
-            onPressed: () {
-              if (docID == null) {
-                firebaseapi.addNote(textController.text);
-              } else {
-                firebaseapi.updateNote(docID, textController.text);
-              }
-              textController.clear();
-              Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: tealGreen,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+          SizedBox(height: 12),
+          TextField(
+            controller: textController,
+            maxLines: 6,
+            keyboardType: TextInputType.multiline,
+            decoration: InputDecoration(
+              hintText: "Enter your note here",
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide.none,
               ),
-            ),
-            child: MyText(
-              text: "Edit",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-              textAlign: TextAlign.center,
             ),
           ),
         ],
       ),
-    );
-  }
+      actions: [
+        TextButton(
+          onPressed: () {
+            textController.clear();  // Clear the text field when closing
+            Navigator.pop(context);
+          },
+          child: MyText(
+            text: "Close",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.red,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            if (docID == null) {
+              // Create a new note
+              firebaseapi.addNote(textController.text);
+            } else {
+              // Update an existing note
+              firebaseapi.updateNote(docID, textController.text);
+            }
+            textController.clear();  // Clear text after saving
+            Navigator.pop(context);
+          },
+          style: TextButton.styleFrom(
+            backgroundColor: tealGreen,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: MyText(
+            text: docID == null ? "Create" : "Update",  // Use 'Create' for new notes, 'Update' for editing
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
