@@ -7,6 +7,6 @@ class MyappRoute {
 }
 class AppPages {
   static final pages = [
-    GetPage(name: MyappRoute.login, page: ()=>SignInScreen(),binding: LoginBindings()),
+    GetPage(name: MyappRoute.login, page: ()=>LoginPage(),binding: LoginBindings()),
   ];
 }

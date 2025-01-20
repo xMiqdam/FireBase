@@ -6,7 +6,7 @@ import 'package:mynoteapps/widget/MyText.dart';
 import 'package:mynoteapps/widget/MyTextField.dart';
 import 'home_page.dart';
 
-class SignInScreen extends StatelessWidget {
+class LoginPage extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<User?> signInWithEmailAndPassword(
@@ -161,6 +161,7 @@ class SignInScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                         ),
+
                         SizedBox(height: 20),
                         Row(
                           children: [
