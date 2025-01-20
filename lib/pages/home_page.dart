@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } catch (e) {
-      print('Error during sign-out :): $e');
+      print('ERROR SIGN-OUT :): $e');
     }
   }
 
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: lightBeige,
         content: MyTextField(
           controller: textController,
-          hintText: "Enter your note here",
+          hintText: " Please Enter your note here",
           isPassword: false,
           icon: Icons.note,
           textFieldColor: Colors.white,
@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                 child: MyText(
                   text: "No notes available.",
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 17,
                     color: blackz,
                   ),
                   textAlign: TextAlign.center,
