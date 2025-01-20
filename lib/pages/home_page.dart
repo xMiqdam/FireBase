@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mynoteapps/api/firebase_api.dart';
+import 'package:mynoteapps/pages/login_page.dart';
 import 'package:mynoteapps/widget/MyColors.dart';
 import 'package:mynoteapps/widget/MyText.dart';
 import 'package:mynoteapps/widget/MyTextField.dart';
@@ -14,6 +17,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final FirebaseApi firebaseapi = FirebaseApi();
   final TextEditingController textController = TextEditingController();
+
+
+   Future<void> signOut(BuildContext context) async {
+    try {
+    
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    } catch (e) {
+      print('Error during sign-out :): $e');
+    }
+  }
+
 
   void openNoteBox({String? docID}) {
     showDialog(
@@ -70,22 +89,16 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.left,
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Center(
-              child: MyText(
-                text: 'Hi User',
-                style: TextStyle(
-                  fontFamily: 'Cursive',
-                  fontSize: 20,
-                  color: blackz,
-                ),
-                textAlign: TextAlign.right,
-              ),
-            ),
+          
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              signOut(context);  
+            },
           ),
         ],
       ),
+      
       floatingActionButton: FloatingActionButton(
         onPressed: openNoteBox,
         backgroundColor: tealGreen,
