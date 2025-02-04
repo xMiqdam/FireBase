@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:mynoteapps/bindings/login_bindings.dart';
+import 'package:mynoteapps/bindings/binding.dart';
+
 import 'package:mynoteapps/pages/login_page.dart';
 
 class MyappRoute {
@@ -7,6 +8,6 @@ class MyappRoute {
 }
 class AppPages {
   static final pages = [
-    GetPage(name: MyappRoute.login, page: ()=>LoginPage(),binding: LoginBindings()),
+    GetPage(name: MyappRoute.login, page: ()=>LoginPage(),binding: AppBinding()),
   ];
 }

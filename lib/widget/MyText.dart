@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
-
 class MyText extends StatelessWidget {
   final String text;
   final TextStyle style;
