@@ -4,7 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:get/get.dart'; // Import GetX
 import 'package:mynoteapps/api/firebase_api.dart';
-import 'package:mynoteapps/pages/login_page.dart';
+import 'package:mynoteapps/pages/login_page.dart'; // Ensure you keep any necessary imports for navigation
+import 'package:mynoteapps/pages/profile_page.dart'; // Import your Profile Page
 import 'package:mynoteapps/widget/MyColors.dart';
 import 'package:mynoteapps/widget/MyText.dart';
 import 'package:mynoteapps/widget/MyTextField.dart';
@@ -13,84 +14,6 @@ import 'package:mynoteapps/widget/MyButton.dart';
 class HomePage extends StatelessWidget {
   final FirebaseApi firebaseapi = FirebaseApi();
   final TextEditingController textController = TextEditingController();
-
-  Future<void> signOut(BuildContext context) async {
-    try {
-      await FirebaseAuth.instance.signOut();
-      await GoogleSignIn().signOut();
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
-    } catch (e) {
-      print('Error during sign-out: $e');
-    }
-  }
-
-  void showLogoutConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: lightBeige,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: MyText(
-            text: "Konfirmasi Log Out",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: blackz,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          content: MyText(
-            text: "Apakah Anda yakin ingin log out?",
-            style: TextStyle(
-              fontSize: 16,
-              color: blackz,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Tutup dialog tanpa log out
-              },
-              child: MyText(
-                text: "Batal",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.red,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Tutup dialog
-                signOut(context); // Panggil fungsi log out
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: tealGreen,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: MyText(
-                text: "Log Out  ",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   void openNotePreview({required BuildContext context, required String docID, required String currentNote}) {
     textController.text = currentNote; // Set teks catatan ke controller
@@ -134,7 +57,6 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              // Tambahkan dialog konfirmasi sebelum menghapus
               Get.defaultDialog(
                 title: "Konfirmasi Hapus",
                 titleStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -273,6 +195,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void navigateToProfile(BuildContext context) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -289,14 +215,21 @@ class HomePage extends StatelessWidget {
           ),
           textAlign: TextAlign.left,
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () {
-              showLogoutConfirmationDialog(context); // Tampilkan dialog konfirmasi
-            },
-          ),
-        ],
+       actions: [
+  IconButton(
+    onPressed: () {
+      navigateToProfile(context); // Arahkan ke halaman Profil saat foto profil diklik
+    },
+    icon: CircleAvatar(
+      radius: 20, // Atur ukuran lingkaran sesuai kebutuhan
+      backgroundImage: NetworkImage(
+        FirebaseAuth.instance.currentUser?.photoURL ??
+        'https://www.example.com/default-profile-picture.jpg', // Gambar default jika foto profil tidak tersedia
+      ),
+    ),
+  ),
+],
+
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => openNoteEditor(context: context),
